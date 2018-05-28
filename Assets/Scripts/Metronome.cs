@@ -9,29 +9,61 @@ public class Metronome : MonoBehaviour
     double nextTick = 0.0F; // The next tick in dspTime
     double sampleRate = 0.0F; 
 	bool isStarted;
+    private int tickCount;
+    private int measureCount;
+    private int downbeatCount;
+    private int isDownBeat;
+
+    private int[] metronomeInfo;
+
     bool ticked = false;
 	private AudioSource aud;
 	 private GameObject goPlayer;
 
     void Start() {
-        double startTick = AudioSettings.dspTime;
+        tickCount = 0;
+        measureCount = 0;
+        downbeatCount = 1;
+        isDownBeat = 1;
+        metronomeInfo = new int[4];
+        metronomeInfo[0] = measureCount;
+        metronomeInfo[1] = downbeatCount;
+        metronomeInfo[2] = tickCount;
+        metronomeInfo[3] = isDownBeat;
+        double startTick = AudioSettings.dspTime ;
         sampleRate = AudioSettings.outputSampleRate;
 		isStarted = false;
-        nextTick = startTick + (60.0 / bpm);
+        nextTick = startTick + (60.0f / bpm); //1 beat için geçmesi gereken saniye sarkı offbeast baslayınca 30/bpm ekledık
 		//aud = goPlayer.audio;
     }
 
     void LateUpdate() {
         if ( !ticked && nextTick >= AudioSettings.dspTime ) {
             ticked = true;
-            Debug.Log("Broadcasting OnTick!!");
-            BroadcastMessage( "OnTick" );
+            //Debug.Log("Broadcasting OnTick!!");
+
+            updateMetronomeInfo();
+            BroadcastMessage( "OnTick" , metronomeInfo);
+
+            tickCount = (tickCount + 1) % 8;
+            if(tickCount  == 0){
+                downbeatCount = (downbeatCount + 1) % 4;
+                isDownBeat = 1;
+                
+            }
+            else{
+                isDownBeat = 0;
+            }
+
+            if(downbeatCount == 0 && isDownBeat == 1){
+                measureCount++;
+            }
         }
     }
 
     // Just an example OnTick here
     void OnTick() {
-        Debug.Log( "Tick" );
+        //Debug.Log( "Tick" );
         
 		
 		if(!isStarted && !GetComponent<AudioSource>().isPlaying){
@@ -45,9 +77,7 @@ public class Metronome : MonoBehaviour
     void FixedUpdate() {
 
         double timePerTick;
-        if(!isStarted)
-            timePerTick = 60.0f / bpm;
-        else
+  
             timePerTick = 7.5f / bpm;
         double dspTime = AudioSettings.dspTime;
 
@@ -58,5 +88,12 @@ public class Metronome : MonoBehaviour
             
         }
 
+    }
+
+    void updateMetronomeInfo(){
+          metronomeInfo[0] = measureCount;
+          metronomeInfo[1] = downbeatCount;
+          metronomeInfo[2] = tickCount;
+          metronomeInfo[3] = isDownBeat;
     }
 }
