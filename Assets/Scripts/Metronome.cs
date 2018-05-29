@@ -31,21 +31,24 @@ public class Metronome : MonoBehaviour
         metronomeInfo[2] = tickCount;
         metronomeInfo[3] = isDownBeat;
         double startTick = AudioSettings.dspTime ;
+        //Debug.Log("Start tick : " + startTick);
         sampleRate = AudioSettings.outputSampleRate;
 		isStarted = false;
         nextTick = startTick + (60.0f / bpm); //1 beat için geçmesi gereken saniye sarkı offbeast baslayınca 30/bpm ekledık
+        //Debug.Log("Next tick : " + nextTick);
+        
 		//aud = goPlayer.audio;
     }
 
     void LateUpdate() {
-        if ( !ticked && nextTick >= AudioSettings.dspTime ) {
+        if ( !ticked && nextTick >= (AudioSettings.dspTime) ) {
             ticked = true;
             //Debug.Log("Broadcasting OnTick!!");
 
             updateMetronomeInfo();
             BroadcastMessage( "OnTick" , metronomeInfo);
 
-            tickCount = (tickCount + 1) % 8;
+            tickCount = (tickCount + 1) % 4;
             if(tickCount  == 0){
                 downbeatCount = (downbeatCount + 1) % 4;
                 isDownBeat = 1;
@@ -67,8 +70,12 @@ public class Metronome : MonoBehaviour
         
 		
 		if(!isStarted && !GetComponent<AudioSource>().isPlaying){
-				GetComponent<AudioSource>().Play();
-				Debug.Log("Start Playing!");
+
+             AudioSource music = FindObjectOfType<AudioSource>();
+
+            music.PlayDelayed(1.50f);
+				
+				//Debug.Log("Start Playing!");
                 isStarted = true;
 		}
          
@@ -76,12 +83,13 @@ public class Metronome : MonoBehaviour
 
     void FixedUpdate() {
 
+//find nextTick
         double timePerTick;
   
-            timePerTick = 7.5f / bpm;
+            timePerTick = 15f / bpm;
         double dspTime = AudioSettings.dspTime;
 
-        while ( dspTime >= nextTick ) {
+        while ( (dspTime )  >= nextTick) {
 			
             ticked = false;
             nextTick += timePerTick;
