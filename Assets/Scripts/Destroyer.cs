@@ -11,13 +11,16 @@ public class Destroyer : MonoBehaviour {
             return;
         }
 
-        if (other.gameObject.transform.parent)
-        {
-            Destroy(other.gameObject.transform.parent.gameObject);
+        if( other.tag != "MainGround"){
+            if ( other.gameObject.transform.parent)
+                {
+                    Destroy(other.gameObject.transform.parent.gameObject);
+                }
+                else{
+                    Destroy(other.gameObject);
+                }
         }
-        else{
-            Destroy(other.gameObject);
-        }
+ 
            
     }
 }

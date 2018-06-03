@@ -8,6 +8,7 @@ public class CameraRunner : MonoBehaviour {
 
 	void Start(){
 		Screen.orientation = ScreenOrientation.LandscapeLeft;
+		 Application.targetFrameRate = 60;
 	}
 
 	// Update is called once per frame

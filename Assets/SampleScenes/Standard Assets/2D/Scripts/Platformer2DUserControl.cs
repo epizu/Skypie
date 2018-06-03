@@ -44,7 +44,7 @@ namespace UnityStandardAssets._2D
                     float distance = Mathf.Abs(hit.point.y - transform.position.y);
                     float heightError = floatHeight - distance;
                     float force = liftForce * heightError - rb2D.velocity.y * damping;
-                    hit.rigidbody.AddForce(Vector3.up * force);
+                    hit.transform.gameObject.GetComponent<Renderer>().material.color = Color.red;
         }
 
 
